@@ -116,7 +116,7 @@ fail:
 /* Without this, `(int)imported_bool` may actually return something outside of {0, 1}. */
 static void coerce_untrusted_bool(bool* ptr) {
     static_assert(sizeof(bool) == sizeof(unsigned char), "Unsupported compiler");
-    *ptr = !!*(unsigned char*)ptr;
+    *ptr = !!READ_ONCE(*(unsigned char*)ptr);
 }
 
 /* `*topo_info` should already be deep-copied into the enclave. */
