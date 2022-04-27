@@ -11,7 +11,7 @@
 
 /* Used to represent buffers having numeric values and unit suffixes if present, e.g. "1024576K".
  * NOTE: Used to allocate on stack; increase with caution or use malloc instead. */
-#define PAL_SYSFS_BUF_FILESZ (256+2)
+#define PAL_SYSFS_BUF_FILESZ 512
 
 /* Max number of caches (such as L1i, L1d, L2, etc.) supported. */
 #define MAX_CACHES 4
