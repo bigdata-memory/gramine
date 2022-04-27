@@ -6,6 +6,7 @@
 
 /*
  * This file contains the APIs to expose host topology information.
+ * All of them are not suitable for untrusted inputs! (due to overflows and liberal parsing)
  */
 
 #include <asm/errno.h>
@@ -22,9 +23,9 @@ ssize_t read_file_buffer(const char* filename, char* buf, size_t count) {
         return fd;
 
     ssize_t ret = DO_SYSCALL(read, fd, buf, count);
-    DO_SYSCALL(close, fd);
-    if (ret < 0)
-        return ret;
+    long close_ret = DO_SYSCALL(close, fd);
+    if (ret == 0 && close_ret < 0)
+        ret = close_ret;
 
     return ret;
 }
@@ -84,7 +85,6 @@ static int read_numbers_from_file(const char* path, size_t* out_arr, size_t coun
     return 0;
 }
 
-// Not suitable for untrusted inputs! (due to overflows and liberal parsing)
 static int iterate_ranges_from_file(const char* path, int (*callback)(size_t index, void* arg),
                                     void* callback_arg) {
     char buf[PAL_SYSFS_BUF_FILESZ];

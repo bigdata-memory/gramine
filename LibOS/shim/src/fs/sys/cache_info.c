@@ -19,9 +19,9 @@ struct callback_arg {
     size_t cache_class; // index in caches_ids[]
 };
 
-static bool is_same_cache(size_t pos, const void* _arg) {
+static bool is_same_cache(size_t idx, const void* _arg) {
     const struct callback_arg* arg = _arg;
-    const struct pal_cpu_thread_info* thread = &g_pal_public_state->topo_info.threads[pos];
+    const struct pal_cpu_thread_info* thread = &g_pal_public_state->topo_info.threads[idx];
     return thread->is_online
            && thread->caches_ids[arg->cache_class] == arg->cache_id_to_match;
 }

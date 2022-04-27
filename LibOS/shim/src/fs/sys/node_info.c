@@ -45,11 +45,11 @@ int sys_node_general_load(struct shim_dentry* dent, char** out_data, size_t* out
     return sys_load(str, out_data, out_size);
 }
 
-static bool is_in_same_node(size_t pos, const void* _arg) {
+static bool is_in_same_node(size_t idx, const void* _arg) {
     unsigned int arg_node_id = *(const unsigned int*)_arg;
-    if (!g_pal_public_state->topo_info.threads[pos].is_online)
+    if (!g_pal_public_state->topo_info.threads[idx].is_online)
         return false;
-    size_t core_id   = g_pal_public_state->topo_info.threads[pos].core_id;
+    size_t core_id   = g_pal_public_state->topo_info.threads[idx].core_id;
     size_t socket_id = g_pal_public_state->topo_info.cores[core_id].socket_id;
     size_t node_id   = g_pal_public_state->topo_info.sockets[socket_id].node_id;
     return node_id == arg_node_id;
