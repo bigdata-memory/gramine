@@ -255,7 +255,7 @@ struct set_cache_id_args {
 
 static int set_cache_id(size_t ind, void* _args) {
     struct set_cache_id_args* args = _args;
-    args->threads[ind].caches_ids[args->cache_ind] = args->id_to_set;
+    args->threads[ind].ids_of_caches[args->cache_ind] = args->id_to_set;
     return 0;
 }
 
@@ -304,7 +304,7 @@ int get_topology_info(struct pal_topo_info* topo_info) {
         threads[i].is_online = false;
         threads[i].core_id = -1;
         for (size_t j = 0; j < MAX_CACHES; j++) {
-            threads[i].caches_ids[j] = (size_t)-1;
+            threads[i].ids_of_caches[j] = (size_t)-1;
         }
     }
     for (size_t i = 0; i < nodes_cnt; i++)
@@ -387,7 +387,7 @@ int get_topology_info(struct pal_topo_info* topo_info) {
             continue;
 
         for (size_t j = 0; j < MAX_CACHES; j++) {
-            if (threads[i].caches_ids[j] == (size_t)-1) {
+            if (threads[i].ids_of_caches[j] == (size_t)-1) {
                 /* Insert new cache to the list.
                  * `shared_cpu_map` lists threads sharing this very cache. All sharing is
                  * between caches on the same cache level. */

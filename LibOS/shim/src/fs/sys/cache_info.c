@@ -16,14 +16,14 @@
 
 struct callback_arg {
     size_t cache_id_to_match; // index in global caches list (topo_info->caches[])
-    size_t cache_class; // index in caches_ids[]
+    size_t cache_class; // index in ids_of_caches[]
 };
 
 static bool is_same_cache(size_t idx, const void* _arg) {
     const struct callback_arg* arg = _arg;
     const struct pal_cpu_thread_info* thread = &g_pal_public_state->topo_info.threads[idx];
     return thread->is_online
-           && thread->caches_ids[arg->cache_class] == arg->cache_id_to_match;
+           && thread->ids_of_caches[arg->cache_class] == arg->cache_id_to_match;
 }
 
 int sys_cache_load(struct shim_dentry* dent, char** out_data, size_t* out_size) {
@@ -42,7 +42,7 @@ int sys_cache_load(struct shim_dentry* dent, char** out_data, size_t* out_size) 
     const char* name = dent->name;
 
     const struct pal_topo_info* topo = &g_pal_public_state->topo_info;
-    size_t cache_idx = topo->threads[thread_id].caches_ids[cache_class];
+    size_t cache_idx = topo->threads[thread_id].ids_of_caches[cache_class];
     const struct pal_cache_info* cache = &topo->caches[cache_idx];
     char str[PAL_SYSFS_MAP_FILESZ] = {'\0'};
     if (strcmp(name, "shared_cpu_map") == 0) {

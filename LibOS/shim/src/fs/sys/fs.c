@@ -99,7 +99,7 @@ static int sys_resource_info(const char* parent_name, size_t* out_total, const c
         for (size_t i = 0; i < topo->threads_cnt; i++) {
             if (topo->threads[i].is_online) {
                 for (size_t j = 0; j < MAX_CACHES; j++) {
-                    if (topo->threads[i].caches_ids[j] != (size_t)-1) {
+                    if (topo->threads[i].ids_of_caches[j] != (size_t)-1) {
                         max = MAX(max, j + 1); // +1 to convert max index to elements count
                     }
                 }

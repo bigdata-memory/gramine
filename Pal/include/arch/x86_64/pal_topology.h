@@ -48,7 +48,7 @@ struct pal_cpu_thread_info {
     /* Everything below is valid only if the thread is online! */
 
     size_t core_id; // containing core; index into pal_topo_info::cores
-    size_t caches_ids[MAX_CACHES]; // indices into pal_topo_info::caches, -1 if not present
+    size_t ids_of_caches[MAX_CACHES]; // indices into pal_topo_info::caches, -1 if not present
 };
 
 struct pal_cpu_core_info {

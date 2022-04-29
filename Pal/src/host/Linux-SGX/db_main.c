@@ -150,19 +150,20 @@ static int sanitize_topo_info(struct pal_topo_info* topo_info) {
                 return -PAL_ERROR_INVAL;
             /* Verify that the cache array has no holes... */
             for (size_t j = 0; j < MAX_CACHES - 1; j++)
-                if (thread->caches_ids[j] == (size_t)-1 && thread->caches_ids[j + 1] != (size_t)-1)
+                if (thread->ids_of_caches[j] == (size_t)-1
+                        && thread->ids_of_caches[j + 1] != (size_t)-1)
                     return -PAL_ERROR_INVAL;
             /* ...and valid indices. */
             for (size_t j = 0; j < MAX_CACHES; j++) {
-                if (thread->caches_ids[j] != (size_t)-1
-                    && thread->caches_ids[j] >= topo_info->caches_cnt)
+                if (thread->ids_of_caches[j] != (size_t)-1
+                    && thread->ids_of_caches[j] >= topo_info->caches_cnt)
                     return -PAL_ERROR_INVAL;
             }
         } else {
             // Not required, just a hardening in case we accidentally accessed offline CPU's fields.
             thread->core_id = 0;
             for (size_t j = 0; j < MAX_CACHES; j++)
-                thread->caches_ids[j] = 0;
+                thread->ids_of_caches[j] = 0;
         }
     }
 
