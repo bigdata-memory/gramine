@@ -515,14 +515,7 @@ static int send(PAL_HANDLE handle, struct pal_iovec* pal_iov, size_t iov_len, si
         assert(linux_addrlen <= INT_MAX);
     }
 
-    struct iovec* iov = malloc(iov_len * sizeof(*iov));
-    if (!iov) {
-        return -PAL_ERROR_NOMEM;
-    }
-    for (size_t i = 0; i < iov_len; i++) {
-        iov[i].iov_base = pal_iov[i].iov_base;
-        iov[i].iov_len = pal_iov[i].iov_len;
-    }
+    struct iovec* iov = (void*)pal_iov;
 
     unsigned int flags = force_nonblocking ? MSG_DONTWAIT : 0;
     struct msghdr msg = {
@@ -532,7 +525,6 @@ static int send(PAL_HANDLE handle, struct pal_iovec* pal_iov, size_t iov_len, si
         .msg_iovlen = iov_len,
     };
     int ret = DO_SYSCALL(sendmsg, handle->sock.fd, &msg, flags);
-    free(iov);
     if (ret < 0) {
         return unix_to_pal_error(ret);
     }
@@ -545,14 +537,7 @@ static int recv(PAL_HANDLE handle, struct pal_iovec* pal_iov, size_t iov_len,
     assert(handle->hdr.type == PAL_TYPE_SOCKET);
 
     struct sockaddr_storage sa_storage;
-    struct iovec* iov = malloc(iov_len * sizeof(*iov));
-    if (!iov) {
-        return -PAL_ERROR_NOMEM;
-    }
-    for (size_t i = 0; i < iov_len; i++) {
-        iov[i].iov_base = pal_iov[i].iov_base;
-        iov[i].iov_len = pal_iov[i].iov_len;
-    }
+    struct iovec* iov = (void*)pal_iov;
 
     unsigned int flags = force_nonblocking ? MSG_DONTWAIT : 0;
     if (handle->sock.type == PAL_SOCKET_UDP) {
@@ -567,7 +552,6 @@ static int recv(PAL_HANDLE handle, struct pal_iovec* pal_iov, size_t iov_len,
         .msg_iovlen = iov_len,
     };
     int ret = DO_SYSCALL(recvmsg, handle->sock.fd, &msg, flags);
-    free(iov);
     if (ret < 0) {
         return unix_to_pal_error(ret);
     }

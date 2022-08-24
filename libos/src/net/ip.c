@@ -652,19 +652,17 @@ static int send(struct libos_handle* handle, struct iovec* iov, size_t iov_len, 
         linux_to_pal_sockaddr(addr, &pal_ip_addr);
     }
 
-    struct pal_iovec* pal_iov = malloc(iov_len * sizeof(*pal_iov));
-    if (!pal_iov) {
-        return -ENOMEM;
-    }
-    for (size_t i = 0; i < iov_len; i++) {
-        pal_iov[i].iov_base = iov[i].iov_base;
-        pal_iov[i].iov_len = iov[i].iov_len;
-    }
+    struct pal_iovec* pal_iov = (void*)iov;
+    static_assert(sizeof(*pal_iov) == sizeof(*iov), "");
+    static_assert(alignof(__typeof__(*pal_iov)) == alignof(__typeof__(*iov)), "");
+    static_assert(sizeof(pal_iov->iov_base) == sizeof(iov->iov_base), "");
+    static_assert(sizeof(pal_iov->iov_len) == sizeof(iov->iov_len), "");
+    static_assert(offsetof(struct pal_iovec, iov_base) == offsetof(struct iovec, iov_base), "");
+    static_assert(offsetof(struct pal_iovec, iov_len) == offsetof(struct iovec, iov_len), "");
 
     int ret = PalSocketSend(sock->pal_handle, pal_iov, iov_len, out_size,
                             addr ? &pal_ip_addr : NULL, force_nonblocking);
     ret = (ret == -PAL_ERROR_TOOLONG) ? -EMSGSIZE : pal_to_unix_errno(ret);
-    free(pal_iov);
     return ret;
 }
 
@@ -684,19 +682,17 @@ static int recv(struct libos_handle* handle, struct iovec* iov, size_t iov_len,
             __builtin_unreachable();
     }
 
-    struct pal_iovec* pal_iov = malloc(iov_len * sizeof(*pal_iov));
-    if (!pal_iov) {
-        return -ENOMEM;
-    }
-    for (size_t i = 0; i < iov_len; i++) {
-        pal_iov[i].iov_base = iov[i].iov_base;
-        pal_iov[i].iov_len = iov[i].iov_len;
-    }
+    struct pal_iovec* pal_iov = (void*)iov;
+    static_assert(sizeof(*pal_iov) == sizeof(*iov), "");
+    static_assert(alignof(__typeof__(*pal_iov)) == alignof(__typeof__(*iov)), "");
+    static_assert(sizeof(pal_iov->iov_base) == sizeof(iov->iov_base), "");
+    static_assert(sizeof(pal_iov->iov_len) == sizeof(iov->iov_len), "");
+    static_assert(offsetof(struct pal_iovec, iov_base) == offsetof(struct iovec, iov_base), "");
+    static_assert(offsetof(struct pal_iovec, iov_len) == offsetof(struct iovec, iov_len), "");
 
     struct pal_socket_addr pal_ip_addr;
     int ret = PalSocketRecv(handle->info.sock.pal_handle, pal_iov, iov_len, out_total_size,
                             addr ? &pal_ip_addr : NULL, force_nonblocking);
-    free(pal_iov);
     if (ret < 0) {
         return pal_to_unix_errno(ret);
     }
