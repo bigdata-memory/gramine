@@ -10,11 +10,11 @@
 #include "libos_table.h"
 
 long libos_syscall_fork(void) {
-    log_error("****-> creating a process...");
+    log_error("****-> creating a process from syscall ...");
     return libos_syscall_clone(SIGCHLD, 0, NULL, NULL, 0);
 }
 
 long libos_syscall_vfork(void) {
-    log_error("****-> creating a thread...");
+    log_error("****-> creating a thread from syscall ...");
     return libos_syscall_clone(CLONE_VFORK | CLONE_VM | SIGCHLD, 0, NULL, NULL, 0);
 }

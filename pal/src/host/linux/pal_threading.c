@@ -78,6 +78,7 @@ out:
  * and this function modifies the stack protector's GS register, we disable stack protector here. */
 __attribute_no_stack_protector
 int pal_thread_init(void* tcbptr) {
+    log_error("****-> pal_thread_init() ...");
     PAL_LINUX_TCB* tcb = tcbptr;
     int ret;
 
@@ -164,6 +165,7 @@ int _PalThreadCreate(PAL_HANDLE* handle, int (*callback)(void*), void* param) {
 
     // TODO: pal_thread_init() may fail during initialization, we should check its result (but this
     // happens asynchronously, so it's not trivial to do).
+    log_error("****-> creating a new thread from _PalThreadCreate() ...");
     ret = clone(pal_thread_init, child_stack,
                 CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | CLONE_THREAD | CLONE_SIGHAND
                 | CLONE_PARENT_SETTID,

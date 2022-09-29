@@ -277,6 +277,7 @@ int clone_thread(void) {
 
     // TODO: pal_thread_init() may fail during initialization (e.g. on TCS exhaustion), we should
     // check its result (but this happens asynchronously, so it's not trivial to do).
+    log_error("****-> creating a new thread from clone_thread() ...");
     ret = clone(pal_thread_init, child_stack_top,
                 CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | CLONE_THREAD | CLONE_SIGHAND,
                 tcb, /*parent_tid=*/NULL, /*tls=*/NULL, /*child_tid=*/NULL, thread_exit);
